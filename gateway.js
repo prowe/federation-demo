@@ -1,5 +1,6 @@
 const { ApolloServer } = require("apollo-server");
 const { ApolloGateway } = require("@apollo/gateway");
+const buildContext = require('./buildContext');
 
 const gateway = new ApolloGateway({
   serviceList: [
@@ -13,9 +14,12 @@ const gateway = new ApolloGateway({
 (async () => {
   const { schema, executor } = await gateway.load();
 
-  const server = new ApolloServer({ schema, executor });
-
-  server.listen().then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
+  const server = new ApolloServer({
+    schema,
+    executor,
+    context: buildContext
   });
+
+  const {url} = await server.listen();
+  console.log(`🚀 Server ready at ${url}`);
 })();
