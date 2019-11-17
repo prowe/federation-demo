@@ -1,8 +1,10 @@
 const { ApolloServer } = require("apollo-server");
 const { ApolloGateway } = require("@apollo/gateway");
 const buildContext = require('./buildContext');
+const buildService = require('./buildService');
 
 const gateway = new ApolloGateway({
+  buildService,
   serviceList: [
     { name: "accounts", url: "http://localhost:4001/graphql" },
     { name: "reviews", url: "http://localhost:4002/graphql" },

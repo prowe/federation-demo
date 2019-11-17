@@ -1,5 +1,6 @@
 const { ApolloServer, gql } = require("apollo-server");
 const { buildFederatedSchema } = require("@apollo/federation");
+const context = require('./buildContext');
 
 const typeDefs = gql`
   extend type Query {
@@ -15,8 +16,13 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    me() {
-      return users[0];
+    me(obj, args, context) {
+      const user = context.user;
+      return {
+        id: user.sub,
+        name: user.name,
+        username: user.email
+      };
     }
   },
   User: {
@@ -32,7 +38,8 @@ const server = new ApolloServer({
       typeDefs,
       resolvers
     }
-  ])
+  ]),
+  context
 });
 
 server.listen({ port: 4001 }).then(({ url }) => {
